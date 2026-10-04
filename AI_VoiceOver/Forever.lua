@@ -87,3 +87,12 @@ end
 function Utils:GetCurrentModelSet()
     return "HD"
 end
+
+-- Legacy global that Forever no longer defines (SoundQueueUI.lua reads it on every button update, from
+-- InitializeAddon on). Defined only when missing, and in VoiceOver's environment, so _G is never written.
+-- IsMouseOver() with no offsets is the old hit test; the nil check keeps the old tolerance of a missing frame.
+if _G.MouseIsOver == nil then
+    function MouseIsOver(frame)
+        return frame ~= nil and frame:IsMouseOver() or false
+    end
+end
