@@ -1,0 +1,10 @@
+## Interface: 16001
+## Title: VoiceOver
+## Notes: Adds voiceovers to npcs.
+## Version: 0.0.0
+## SavedVariables: VoiceOverDB
+## X-Part-Of: VoiceOver
+
+embeds.xml
+addon.xml
+Forever.lua
