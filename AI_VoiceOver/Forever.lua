@@ -60,12 +60,18 @@ end
 QuestOverlayUI.Update = function() end
 
 -- Defined in VoiceOver's environment, so only this addon's SetCVar calls see it (_G.SetCVar stays
--- Blizzard's). Forever's SetCVar needs a valid public CVar; an unknown one becomes a silent no-op.
+-- Blizzard's). Forever's SetCVar needs a valid public CVar; an unknown one becomes a silent no-op. A CVar
+-- that exists can still be refused (read-only or secure), and it is undocumented whether that throws, so the
+-- call is protected: a refusal must not abort the caller (e.g. the sound-pack load).
 function SetCVar(name, value)
     if GetCVar(name) == nil then
         return false
     end
-    return _G.SetCVar(name, value)
+    local ok, result = pcall(_G.SetCVar, name, value)
+    if not ok then
+        return false
+    end
+    return result
 end
 
 -- Mainline parity: build 70170+ no longer matches Version.IsRetailMainline, so the block in
