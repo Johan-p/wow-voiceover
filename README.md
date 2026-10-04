@@ -29,8 +29,9 @@ Windows may ask for administrator permission when you copy files into Program Fi
 
 1. Download the player: [master.zip](https://github.com/Johan-p/wow-voiceover/archive/refs/heads/master.zip). Unpack it. Inside you will find a folder named `AI_VoiceOver`. Copy ONLY that inner `AI_VoiceOver` folder into the AddOns folder. Do not copy the whole download into AddOns.
 2. Download the sound pack: [AI_VoiceOverData_Vanilla-v1.0.0.zip](https://github.com/mrthinger/wow-voiceover/releases/download/v1.3.1/AI_VoiceOverData_Vanilla-v1.0.0.zip) (1.1 GB). Unpack it into the AddOns folder. When it is done, the folder `AddOns\AI_VoiceOverData_Vanilla\` must exist.
-3. Close the game completely and start it again. A new addon needs a full restart, not just `/reload`.
-4. On the character select screen, open the AddOns list and tick both addons.
+3. Download one small file: [AI_VoiceOverData_Vanilla_Camelot.toc](https://raw.githubusercontent.com/Johan-p/wow-voiceover/master/AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc). Open the link, right-click the page, choose Save as, and save it into `AddOns\AI_VoiceOverData_Vanilla\`. Make sure the saved name is exactly `AI_VoiceOverData_Vanilla_Camelot.toc`, not `.txt`. Without this file Forever shows the sound pack as Incompatible.
+4. Close the game completely and start it again. A new addon needs a full restart, not just `/reload`.
+5. On the character select screen, open the AddOns list and tick both addons.
 
 ### Install with git (command line)
 
@@ -44,15 +45,16 @@ Then go to your AddOns folder with this line:
 pushd "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
 ```
 
-Your prompt now shows the AddOns folder. This line works in both windows.
+This line works in both windows. Your prompt must now end in `\Interface\AddOns`; if it does not, or an error appeared, stop, because the game is installed somewhere else, and put your own `...\_classic_beta_\Interface\AddOns` path between the quotes. Do not run the next lines until the prompt shows the AddOns folder.
 
-Now run these four lines, one at a time, in this order:
+Now run these five lines, one at a time, in this order:
 
 ```
 git clone https://github.com/Johan-p/wow-voiceover.git wow-voiceover
 cmd /c mklink /J AI_VoiceOver wow-voiceover\AI_VoiceOver
-curl.exe -L -O https://github.com/mrthinger/wow-voiceover/releases/download/v1.3.1/AI_VoiceOverData_Vanilla-v1.0.0.zip
+curl.exe -f -L -O https://github.com/mrthinger/wow-voiceover/releases/download/v1.3.1/AI_VoiceOverData_Vanilla-v1.0.0.zip
 tar -xf AI_VoiceOverData_Vanilla-v1.0.0.zip
+curl.exe -f -L -o AI_VoiceOverData_Vanilla\AI_VoiceOverData_Vanilla_Camelot.toc https://raw.githubusercontent.com/Johan-p/wow-voiceover/master/AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc
 ```
 
 What they do:
@@ -60,6 +62,7 @@ What they do:
 1. The first line downloads the addon into a new folder called `wow-voiceover`. This copy is called a clone.
 2. The second line makes a link called `AI_VoiceOver`. (The `cmd /c` at the start only lets PowerShell run it.) The addon sits one folder down inside the clone, and the game only loads folders that sit directly inside AddOns. The link makes the addon show up there, and it points back to the clone.
 3. The third line downloads the sound pack (1.1 GB). The fourth line unpacks it into `AI_VoiceOverData_Vanilla`.
+4. The fifth line downloads one small file into that folder. Without it Forever shows the sound pack as Incompatible.
 
 If you installed by hand before, delete the old `AI_VoiceOver` folder first. Otherwise the second line fails.
 
@@ -67,20 +70,21 @@ Last, restart the game completely. A new addon needs a full restart, not just `/
 
 ### Updating
 
-If you installed with git: open Command Prompt or PowerShell as administrator, go to the AddOns folder, and pull the update.
+If you installed with git: open Command Prompt or PowerShell as administrator, go to the AddOns folder, and pull the update. The prompt must end in `\Interface\AddOns`; if it does not, or an error appeared, stop and fix the path first. Then download the small file again, because it can change.
 
 ```
 pushd "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
 git -C wow-voiceover pull
+curl.exe -f -L -o AI_VoiceOverData_Vanilla\AI_VoiceOverData_Vanilla_Camelot.toc https://raw.githubusercontent.com/Johan-p/wow-voiceover/master/AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc
 ```
 
 Then type `/reload` in the game. If the update added a new file, restart the game instead.
 
-If you installed by hand: download the repository zip again (the same master.zip as above). Then replace the `AI_VoiceOver` folder in AddOns with the new one.
+If you installed by hand: download the repository zip again (the same master.zip as above). Then replace the `AI_VoiceOver` folder in AddOns with the new one. Download `AI_VoiceOverData_Vanilla_Camelot.toc` again from the link in step 3, because it can change.
 
 ### Removing
 
-If you installed with git, run these two lines from the AddOns folder (the same window as above). The order matters. Remove the link first, then the clone. The first line removes only the link. The second line deletes the clone.
+If you installed with git, run these two lines from the AddOns folder (the same window as above). Remove the link first, then the clone. The first line removes only the link. The second line deletes the clone.
 
 ```
 cmd /c rmdir AI_VoiceOver
@@ -89,56 +93,44 @@ cmd /c rmdir /s /q wow-voiceover
 
 Never run `rmdir /s` on `AI_VoiceOver` itself. It would delete the files in your clone. In PowerShell a plain `rmdir` is a different command, which is why these lines start with `cmd /c`.
 
-If you also want the sound pack gone, delete the `AI_VoiceOverData_Vanilla` folder, and the zip file if you still have it.
+If you also want the sound pack gone, delete the `AI_VoiceOverData_Vanilla` folder (it holds the extra TOC file too), and the zip file if you still have it.
 
 If you installed by hand, delete the `AI_VoiceOver` folder in AddOns the normal way.
 
-### Other systems (PowerShell, Linux, macOS)
+### Other systems (Linux, macOS)
 
-Run everything below from your AddOns folder. Do the first block for your system once, in order. The update and remove lines come later.
+The Windows commands above already work in PowerShell. In PowerShell, type `curl.exe`, not `curl`, because PowerShell has its own, different command called `curl`.
 
-**PowerShell:** The Windows commands above already work in PowerShell. In PowerShell, type `curl.exe`, not `curl`, because PowerShell has its own command called `curl`. If you prefer PowerShell's own commands:
-
-Make the link with this line instead of the `cmd /c mklink` line:
-
-```
-New-Item -ItemType Junction -Path AI_VoiceOver -Target wow-voiceover\AI_VoiceOver
-```
-
-Download and unpack the sound pack with these two lines instead of the `curl.exe` and `tar` lines:
-
-```
-Invoke-WebRequest -Uri https://github.com/mrthinger/wow-voiceover/releases/download/v1.3.1/AI_VoiceOverData_Vanilla-v1.0.0.zip -OutFile AI_VoiceOverData_Vanilla-v1.0.0.zip
-Expand-Archive AI_VoiceOverData_Vanilla-v1.0.0.zip -DestinationPath .
-```
-
-To update, run `git -C wow-voiceover pull`. To remove the link, run the next line. PowerShell's own `rmdir` is a different command, so this one calls the Command Prompt's:
-
-```
-cmd /c rmdir AI_VoiceOver
-```
-
-**Linux and macOS:** your AddOns folder is the `AddOns` folder inside your Wine or Proton prefix. Where that is depends on how you run the game. On macOS, use the AddOns folder of your Forever install.
+This part is for Linux and macOS. Your AddOns folder is the `AddOns` folder inside your Wine or Proton prefix. Where that is depends on how you run the game. On macOS, use the AddOns folder of your Forever install. Run everything below from that folder. Do the first block once, then the block for your system, in order. The update and remove lines come later.
 
 ```
 git clone https://github.com/Johan-p/wow-voiceover.git wow-voiceover
 ln -s -n wow-voiceover/AI_VoiceOver AI_VoiceOver
-curl -L -O https://github.com/mrthinger/wow-voiceover/releases/download/v1.3.1/AI_VoiceOverData_Vanilla-v1.0.0.zip
+curl -f -L -O https://github.com/mrthinger/wow-voiceover/releases/download/v1.3.1/AI_VoiceOverData_Vanilla-v1.0.0.zip
 ```
 
-Then unpack the sound pack. On Linux, GNU tar cannot unpack a zip file, so use unzip:
+Then unpack the sound pack and download the small file that stops Forever showing it as Incompatible. On Linux, GNU tar cannot unpack a zip file, so use unzip:
 
 ```
 unzip AI_VoiceOverData_Vanilla-v1.0.0.zip
+curl -f -L -o AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc https://raw.githubusercontent.com/Johan-p/wow-voiceover/master/AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc
 ```
 
 On macOS, tar can unpack a zip file:
 
 ```
 tar -xf AI_VoiceOverData_Vanilla-v1.0.0.zip
+curl -f -L -o AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc https://raw.githubusercontent.com/Johan-p/wow-voiceover/master/AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc
 ```
 
-To update, run `git -C wow-voiceover pull`. To remove the link, run the next line. Do not add a trailing slash to the name, and never use `rm -r` on it:
+To update, run these two lines. The small file can change, so download it again each time:
+
+```
+git -C wow-voiceover pull
+curl -f -L -o AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc https://raw.githubusercontent.com/Johan-p/wow-voiceover/master/AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc
+```
+
+To remove the link, run the next line. Do not add a trailing slash to the name, and never use `rm -r` on it:
 
 ```
 unlink AI_VoiceOver
@@ -150,7 +142,7 @@ unlink AI_VoiceOver
 - There are no play buttons in the quest log.
 - If you also use WIIIUI, VoiceOver's window may first appear on top of WIIIUI's console. Drag the window where you like. It remembers its place.
 - To hide the minimap button, open VoiceOver's options with `/vo options` and untick "Show Minimap Button".
-- If the sound pack shows as out of date in the AddOn list, tick "Load out of date AddOns" on the character select screen.
+- If the sound pack shows as Incompatible (red), you missed the small `AI_VoiceOverData_Vanilla_Camelot.toc` step, or the file is not named exactly that or is not in `AddOns\AI_VoiceOverData_Vanilla\`, so do that step again and restart the game. Ticking "Load out of date AddOns" on the character select screen is only for the status Out of date.
 
 ---
 
