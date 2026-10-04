@@ -34,19 +34,23 @@ Windows may ask for administrator permission when you copy files into Program Fi
 
 ### Install with git (command line)
 
-This is for players who have git installed. Everything below uses Windows Command Prompt. For PowerShell, Linux and macOS, see "Other systems" further down.
+This is for players who have git installed. For Linux and macOS, see "Other systems" further down.
 
-First, open Command Prompt as administrator. Type "cmd" in the Start menu, right-click Command Prompt and choose Run as administrator. Then go to your AddOns folder with this line:
+First, open Command Prompt or PowerShell as administrator. Either one works with the lines below. To do this, type "cmd" or "powershell" in the Start menu, right-click it and choose Run as administrator. To tell which window you have, look at the prompt. A PowerShell prompt starts with `PS`. Some lines start with `cmd /c`. That is because `mklink` is a Command Prompt command, and `cmd /c` lets PowerShell run it too. It does no harm in Command Prompt.
+
+Then go to your AddOns folder with this line:
 
 ```
-cd /d "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
+pushd "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
 ```
+
+Your prompt now shows the AddOns folder. This line works in both windows.
 
 Now run these four lines, one at a time, in this order:
 
 ```
 git clone https://github.com/Johan-p/wow-voiceover.git wow-voiceover
-mklink /J AI_VoiceOver wow-voiceover\AI_VoiceOver
+cmd /c mklink /J AI_VoiceOver wow-voiceover\AI_VoiceOver
 curl.exe -L -O https://github.com/mrthinger/wow-voiceover/releases/download/v1.3.1/AI_VoiceOverData_Vanilla-v1.0.0.zip
 tar -xf AI_VoiceOverData_Vanilla-v1.0.0.zip
 ```
@@ -54,7 +58,7 @@ tar -xf AI_VoiceOverData_Vanilla-v1.0.0.zip
 What they do:
 
 1. The first line downloads the addon into a new folder called `wow-voiceover`. This copy is called a clone.
-2. The second line makes a link called `AI_VoiceOver`. The addon sits one folder down inside the clone, and the game only loads folders that sit directly inside AddOns. The link makes the addon show up there, and it points back to the clone.
+2. The second line makes a link called `AI_VoiceOver`. (The `cmd /c` at the start only lets PowerShell run it.) The addon sits one folder down inside the clone, and the game only loads folders that sit directly inside AddOns. The link makes the addon show up there, and it points back to the clone.
 3. The third line downloads the sound pack (1.1 GB). The fourth line unpacks it into `AI_VoiceOverData_Vanilla`.
 
 If you installed by hand before, delete the old `AI_VoiceOver` folder first. Otherwise the second line fails.
@@ -63,10 +67,10 @@ Last, restart the game completely. A new addon needs a full restart, not just `/
 
 ### Updating
 
-If you installed with git: open Command Prompt as administrator, go to the AddOns folder, and pull the update.
+If you installed with git: open Command Prompt or PowerShell as administrator, go to the AddOns folder, and pull the update.
 
 ```
-cd /d "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
+pushd "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
 git -C wow-voiceover pull
 ```
 
@@ -76,14 +80,14 @@ If you installed by hand: download the repository zip again (the same master.zip
 
 ### Removing
 
-If you installed with git, run these two lines from the AddOns folder (the same Command Prompt as above). The order matters. Remove the link first, then the clone. The first line removes only the link. The second line deletes the clone.
+If you installed with git, run these two lines from the AddOns folder (the same window as above). The order matters. Remove the link first, then the clone. The first line removes only the link. The second line deletes the clone.
 
 ```
-rmdir AI_VoiceOver
-rmdir /s /q wow-voiceover
+cmd /c rmdir AI_VoiceOver
+cmd /c rmdir /s /q wow-voiceover
 ```
 
-Never run `rmdir /s` on `AI_VoiceOver` itself. It would delete the files in your clone.
+Never run `rmdir /s` on `AI_VoiceOver` itself. It would delete the files in your clone. In PowerShell a plain `rmdir` is a different command, which is why these lines start with `cmd /c`.
 
 If you also want the sound pack gone, delete the `AI_VoiceOverData_Vanilla` folder, and the zip file if you still have it.
 
@@ -93,16 +97,15 @@ If you installed by hand, delete the `AI_VoiceOver` folder in AddOns the normal 
 
 Run everything below from your AddOns folder. Do the first block for your system once, in order. The update and remove lines come later.
 
-**PowerShell** (open it as administrator and go to the AddOns folder first):
+**PowerShell:** The Windows commands above already work in PowerShell. In PowerShell, type `curl.exe`, not `curl`, because PowerShell has its own command called `curl`. If you prefer PowerShell's own commands:
+
+Make the link with this line instead of the `cmd /c mklink` line:
 
 ```
-git clone https://github.com/Johan-p/wow-voiceover.git wow-voiceover
 New-Item -ItemType Junction -Path AI_VoiceOver -Target wow-voiceover\AI_VoiceOver
-curl.exe -L -O https://github.com/mrthinger/wow-voiceover/releases/download/v1.3.1/AI_VoiceOverData_Vanilla-v1.0.0.zip
-tar -xf AI_VoiceOverData_Vanilla-v1.0.0.zip
 ```
 
-Type `curl.exe`, not `curl`. PowerShell has its own command called `curl`, and it is a different one. If you prefer PowerShell's own commands, use these two lines instead of the last two:
+Download and unpack the sound pack with these two lines instead of the `curl.exe` and `tar` lines:
 
 ```
 Invoke-WebRequest -Uri https://github.com/mrthinger/wow-voiceover/releases/download/v1.3.1/AI_VoiceOverData_Vanilla-v1.0.0.zip -OutFile AI_VoiceOverData_Vanilla-v1.0.0.zip
