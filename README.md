@@ -1,5 +1,102 @@
 # VoiceOver for World of Warcraft
 
+## VoiceOver on World of Warcraft: Forever
+
+VoiceOver adds AI-voiced lines to quests and to NPC gossip. This fork makes it work on **World of Warcraft: Forever**. It works on Forever only. This fork does not support retail, and Classic Era players should use the [original addon by MrThinger](https://github.com/mrthinger/wow-voiceover) instead.
+
+It is two addons:
+
+- **VoiceOver** (`AI_VoiceOver`) is the player. It plays the lines and shows a small window while they play.
+- **VoiceOver Data - Vanilla** (`AI_VoiceOverData_Vanilla`) is the sound pack, about 1.1 GB. It holds the voices recorded for the original game's quests.
+
+You can switch each one on and off in the game's AddOn list.
+
+The voices are ready-made audio files that are already inside the sound pack. Nothing is generated while you play. You do not need a subscription, Python or an ElevenLabs account.
+
+This is a fork of the original work by [MrThinger](https://github.com/mrthinger/wow-voiceover). The fork only adds Forever support. The voices and the addon itself are his work.
+
+### Install by hand
+
+1. Open the [Releases page](https://github.com/Johan-p/wow-voiceover/releases) and download two zip files:
+   * the player, `AI_VoiceOver-WoW_Forever-<version>.zip` (the version number changes with each release)
+   * the sound pack, `AI_VoiceOverData_Vanilla-v1.0.0.zip` (about 1.1 GB)
+2. Unpack both zips into your Forever AddOns folder:
+
+   ```
+   C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns
+   ```
+
+   Unpacking into Program Files may ask for administrator permission. You should end up with two folders: `AddOns\AI_VoiceOver\` and `AddOns\AI_VoiceOverData_Vanilla\`.
+3. Start the game, or restart it if it was running. A new addon needs a full restart, not just `/reload`.
+4. On the character select screen, open the AddOns list and make sure both addons are ticked.
+
+### Install with git
+
+For players who have git installed. You do not need the player zip, only the sound pack (see "Sound pack" below).
+
+The player addon sits one folder down inside the repository. So a plain `git clone` into AddOns will not load. Instead, clone the repository anywhere you like, then link its `AI_VoiceOver` folder into AddOns.
+
+**Windows, Command Prompt.** Open it as administrator, because creating a link under Program Files usually needs that. Then run:
+
+```
+git clone https://github.com/Johan-p/wow-voiceover.git "%USERPROFILE%\wow-voiceover"
+mklink /J "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns\AI_VoiceOver" "%USERPROFILE%\wow-voiceover\AI_VoiceOver"
+```
+
+**Windows, PowerShell.** Open it as administrator too. Then run:
+
+```
+git clone https://github.com/Johan-p/wow-voiceover.git "$env:USERPROFILE\wow-voiceover"
+New-Item -ItemType Junction -Path "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns\AI_VoiceOver" -Target "$env:USERPROFILE\wow-voiceover\AI_VoiceOver"
+```
+
+**macOS or Linux.** Replace `<clone>` with the folder where you cloned the repository, and `<AddOns>` with your Forever AddOns folder:
+
+```
+ln -s <clone>/AI_VoiceOver <AddOns>/AI_VoiceOver
+```
+
+Then start the game, or restart it if it was running, and tick both addons in the AddOns list.
+
+To remove the link later, use `rmdir "<link path>"` and nothing else. Never delete the link recursively. That would delete the files in your clone.
+
+The Battle.net launcher has been reported to remove folder links in some cases. If VoiceOver disappears from the AddOn list after a game update, run the link command again.
+
+### Sound pack
+
+The sound pack is a one-time download of about 1.1 GB. Git does not deliver the sound pack, because it is not part of the repository. So everyone installs it once, git users included.
+
+Download it by hand from the [Releases page](https://github.com/Johan-p/wow-voiceover/releases), as described in "Install by hand". Or use two commands. Open a terminal in the AddOns folder (on Windows under Program Files, run it as administrator), then run once:
+
+```
+curl -L -O https://github.com/Johan-p/wow-voiceover/releases/latest/download/AI_VoiceOverData_Vanilla-v1.0.0.zip
+tar -xf AI_VoiceOverData_Vanilla-v1.0.0.zip
+```
+
+Windows 10 and later come with `curl` and `tar`. You should end up with `AddOns\AI_VoiceOverData_Vanilla\`.
+
+The CurseForge app cannot install this sound pack on Forever, because the CurseForge page is for Classic only. Install it from GitHub instead.
+
+### Updating
+
+**If you installed with git:** run this, then type `/reload` in the game. If the update added a new file, restart the game instead.
+
+```
+git -C "%USERPROFILE%\wow-voiceover" pull
+```
+
+**If you installed by hand:** download the player zip again from the Releases page and replace the `AI_VoiceOver` folder with the new one.
+
+### Known limitations
+
+- Quests and NPCs that are new or changed in Forever have no recorded voice. They stay silent, without an error.
+- There are no play buttons in the quest log.
+- If you also use WIIIUI, VoiceOver's window may first appear on top of WIIIUI's console. Drag the window where you like. It remembers its place.
+- The minimap button can be hidden. Open VoiceOver's options with `/vo options`, or go to Esc, Options, AddOns, VoiceOver, and untick "Show Minimap Button".
+- If the sound pack shows as out of date in the AddOn list, tick "Load out of date AddOns" on the character select screen.
+
+---
+
 ## v2: https://allvoice.ai
 Contribute voices on [allvoice.ai](https://allvoice.ai) so I can give each NPC a unique AI voicemodel to power their dialog. The top rated voice for each NPC will be used. 
 
