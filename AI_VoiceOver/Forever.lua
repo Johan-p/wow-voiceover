@@ -6,9 +6,14 @@ This is a separate file so that no file loaded by any other client has to change
 lists it, and it switches itself off below on every client that is not Forever.
 ]]
 
--- Heuristic: Forever reports WOW_PROJECT_MAINLINE, like retail, but its interface number is still below 20000
--- (retail is 12xxxx), so a mainline project with a small interface number is taken to be Forever.
-if not (Version.IsRetailMainline and Version.Interface < 20000) then return end
+-- Forever reports WOW_PROJECT_CAMELOT from build 1.60.1 (70170) on. The ~= nil keeps clients without the
+-- constant (legacy clients have a nil WOW_PROJECT_ID too) from matching nil == nil.
+local isCamelot = WOW_PROJECT_CAMELOT ~= nil and WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
+-- Heuristic, for builds up to 70124 only: they reported WOW_PROJECT_MAINLINE like retail, but their
+-- interface number is still below 20000 (retail is 12xxxx), so a mainline project with a small interface
+-- number is taken to be Forever.
+local isEarlyForever = Version.IsRetailMainline and Version.Interface < 20000
+if not (isCamelot or isEarlyForever) then return end
 
 Version.IsRetailForever = true
 
@@ -18,30 +23,34 @@ local function IsSecret(value)
     return issecretvalue ~= nil and issecretvalue(value) and true or false
 end
 
--- A secret GUID becomes "no NPC", which the callers already treat as "nothing to play".
-local GetNPCGUID = Utils.GetNPCGUID
-function Utils:GetNPCGUID()
-    local guid = GetNPCGUID(self)
-    if IsSecret(guid) then
+-- One read of a unit value: nil if the call throws or the value is (or can't be shown not to be) secret.
+-- The value is only passed and returned, never tested, until IsSecret has said it is plain.
+local function PlainUnitValue(api, unit)
+    local ok, value = pcall(api, unit)
+    if not ok then
         return nil
     end
-    return guid
+    local checked, secret = pcall(IsSecret, value)
+    if checked and not secret then
+        return value
+    end
+    return nil
 end
 
-local GetNPCName = Utils.GetNPCName
+-- A secret GUID or name becomes "no NPC", which the callers already treat as "nothing to play".
+function Utils:GetNPCGUID()
+    return PlainUnitValue(UnitGUID, "questnpc") or PlainUnitValue(UnitGUID, "npc")
+end
+
 function Utils:GetNPCName()
-    local name = GetNPCName(self)
-    if IsSecret(name) then
-        return nil
-    end
-    return name
+    return PlainUnitValue(UnitName, "questnpc") or PlainUnitValue(UnitName, "npc")
 end
 
 -- The original compares UnitSex, which throws on a secret value; an unprefixed filename is its own
 -- "unknown gender" result.
 local AddPlayerGenderToFilename = DataModules.AddPlayerGenderToFilename
 function DataModules:AddPlayerGenderToFilename(fileName)
-    if IsSecret(UnitSex("player")) then
+    if PlainUnitValue(UnitSex, "player") == nil then
         return fileName
     end
     return AddPlayerGenderToFilename(self, fileName)
@@ -57,4 +66,18 @@ function SetCVar(name, value)
         return false
     end
     return _G.SetCVar(name, value)
+end
+
+-- Mainline parity: build 70170+ no longer matches Version.IsRetailMainline, so the block in
+-- Compatibility.lua that gives Mainline the gossip functions and the HD model set is skipped. Forever has no
+-- pre-9.0 gossip globals, and VoiceOver.lua calls these names on every gossip. On builds up to 70124 this
+-- assigns the same values the Mainline block already did.
+if C_GossipInfo then
+    GetGossipText = C_GossipInfo.GetText
+    GetNumGossipActiveQuests = C_GossipInfo.GetNumActiveQuests
+    GetNumGossipAvailableQuests = C_GossipInfo.GetNumAvailableQuests
+end
+
+function Utils:GetCurrentModelSet()
+    return "HD"
 end
