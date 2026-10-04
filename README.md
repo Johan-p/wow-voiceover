@@ -7,7 +7,7 @@ VoiceOver adds AI-voiced lines to quests and to NPC gossip. This fork makes it w
 It is two addons:
 
 - **VoiceOver** (`AI_VoiceOver`) is the player. It plays the lines and shows a small window while they play.
-- **VoiceOver Data - Vanilla** (`AI_VoiceOverData_Vanilla`) is the sound pack, about 1.1 GB. It holds the voices recorded for the original game's quests.
+- **VoiceOver Data - Vanilla** (`AI_VoiceOverData_Vanilla`) is the sound pack, about 1.1 GB. It holds the AI-generated voices for the original game's quests.
 
 You can switch each one on and off in the game's AddOn list.
 
@@ -32,33 +32,58 @@ This is a fork of the original work by [MrThinger](https://github.com/mrthinger/
 
 ### Install with git
 
-For players who have git installed. You do not need the player zip, only the sound pack (see "Sound pack" below).
+For players who have git installed. You do not need the player zip, only the sound pack (see "Sound pack" below). Pick the block for your system and follow it from top to bottom.
 
-The player addon sits one folder down inside the repository. So a plain `git clone` into AddOns will not load. Instead, clone the repository anywhere you like, then link its `AI_VoiceOver` folder into AddOns.
+The player addon sits one folder down inside the repository. So a plain `git clone` into AddOns will not load. Instead, you clone the repository anywhere you like, then link its `AI_VoiceOver` folder into AddOns.
 
-**Windows, Command Prompt.** Open it as administrator, because creating a link under Program Files usually needs that. Then run:
+Before you start:
+
+- If you installed by hand before, delete the old `AddOns\AI_VoiceOver` folder first. Otherwise the link command fails on Windows, or creates a folder inside the old one on Linux and macOS.
+- Run `git clone` in a normal window, not an administrator one. Open a Command Prompt or PowerShell as administrator only for the link command, and only if it says "Access denied". Creating a link under Program Files often needs that. If your normal account can write to the WoW folder, a normal window works for both.
+- To remove the link later, never delete it recursively, and never add a trailing slash to its path. Either would delete the files in your clone. Each block below ends with the safe way.
+
+#### Windows, Command Prompt
 
 ```
 git clone https://github.com/Johan-p/wow-voiceover.git "%USERPROFILE%\wow-voiceover"
 mklink /J "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns\AI_VoiceOver" "%USERPROFILE%\wow-voiceover\AI_VoiceOver"
 ```
 
-**Windows, PowerShell.** Open it as administrator too. Then run:
+Then start the game, or restart it if it was running, and tick both addons in the AddOns list. To remove the link later:
+
+```
+rmdir "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns\AI_VoiceOver"
+```
+
+#### Windows, PowerShell
 
 ```
 git clone https://github.com/Johan-p/wow-voiceover.git "$env:USERPROFILE\wow-voiceover"
 New-Item -ItemType Junction -Path "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns\AI_VoiceOver" -Target "$env:USERPROFILE\wow-voiceover\AI_VoiceOver"
 ```
 
-**macOS or Linux.** Replace `<clone>` with the folder where you cloned the repository, and `<AddOns>` with your Forever AddOns folder:
+Then start the game, or restart it if it was running, and tick both addons in the AddOns list. To remove the link later, call the Command Prompt's `rmdir`, because PowerShell's own `rmdir` is a different command:
 
 ```
-ln -s <clone>/AI_VoiceOver <AddOns>/AI_VoiceOver
+cmd /c rmdir "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns\AI_VoiceOver"
 ```
 
-Then start the game, or restart it if it was running, and tick both addons in the AddOns list.
+If PowerShell asks whether to remove children, answer No.
 
-To remove the link later, use `rmdir "<link path>"` and nothing else. Never delete the link recursively. That would delete the files in your clone.
+#### Linux and macOS
+
+On Linux the game usually runs through Wine, Proton or Lutris. So `<AddOns>` below means the `AddOns` folder inside your Wine or Proton prefix, the one at the end of the path `...\_classic_beta_\Interface\AddOns`. Where that is depends on how you run the game. Replace `<AddOns>` in every line with that folder.
+
+```
+git clone https://github.com/Johan-p/wow-voiceover.git ~/wow-voiceover
+ln -s -n ~/wow-voiceover/AI_VoiceOver "<AddOns>/AI_VoiceOver"
+```
+
+Then start the game, or restart it if it was running, and tick both addons in the AddOns list. To remove the link later, use `unlink`, not `rmdir` (which refuses a link) and never `rm -r`:
+
+```
+unlink "<AddOns>/AI_VoiceOver"
+```
 
 The Battle.net launcher has been reported to remove folder links in some cases. If VoiceOver disappears from the AddOn list after a game update, run the link command again.
 
@@ -66,23 +91,77 @@ The Battle.net launcher has been reported to remove folder links in some cases. 
 
 The sound pack is a one-time download of about 1.1 GB. Git does not deliver the sound pack, because it is not part of the repository. So everyone installs it once, git users included.
 
-Download it by hand from the [Releases page](https://github.com/Johan-p/wow-voiceover/releases), as described in "Install by hand". Or use two commands. Open a terminal in the AddOns folder (on Windows under Program Files, run it as administrator), then run once:
+You can download it by hand from the [Releases page](https://github.com/Johan-p/wow-voiceover/releases), as described in "Install by hand". Or use the commands below. Pick the block for your system. Each one opens a terminal in the AddOns folder and runs once. You should end up with `AddOns\AI_VoiceOverData_Vanilla\`.
+
+#### Windows, Command Prompt
+
+Under Program Files you may need a Command Prompt run as administrator for this. Windows 10 and later come with `curl.exe` and `tar`.
 
 ```
-curl -L -O https://github.com/Johan-p/wow-voiceover/releases/latest/download/AI_VoiceOverData_Vanilla-v1.0.0.zip
+cd /d "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
+curl.exe -L -O https://github.com/Johan-p/wow-voiceover/releases/latest/download/AI_VoiceOverData_Vanilla-v1.0.0.zip
 tar -xf AI_VoiceOverData_Vanilla-v1.0.0.zip
 ```
 
-Windows 10 and later come with `curl` and `tar`. You should end up with `AddOns\AI_VoiceOverData_Vanilla\`.
+#### Windows, PowerShell
+
+Under Program Files you may need a PowerShell run as administrator for this. Windows 10 and later come with `curl.exe` and `tar`. Type `curl.exe`, not `curl`, because PowerShell's own `curl` is a different command.
+
+```
+cd "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
+curl.exe -L -O https://github.com/Johan-p/wow-voiceover/releases/latest/download/AI_VoiceOverData_Vanilla-v1.0.0.zip
+tar -xf AI_VoiceOverData_Vanilla-v1.0.0.zip
+```
+
+Or, with PowerShell's own commands instead of the last two lines:
+
+```
+Invoke-WebRequest -Uri https://github.com/Johan-p/wow-voiceover/releases/latest/download/AI_VoiceOverData_Vanilla-v1.0.0.zip -OutFile AI_VoiceOverData_Vanilla-v1.0.0.zip
+Expand-Archive AI_VoiceOverData_Vanilla-v1.0.0.zip -DestinationPath .
+```
+
+#### Linux
+
+Use the `AddOns` folder inside your Wine or Proton prefix (see "Install with git" above). The `tar` that comes with Linux cannot unpack a zip file, so use `unzip`. If `unzip` is missing, install it with your system's package manager first.
+
+```
+cd "<AddOns>"
+curl -L -O https://github.com/Johan-p/wow-voiceover/releases/latest/download/AI_VoiceOverData_Vanilla-v1.0.0.zip
+unzip AI_VoiceOverData_Vanilla-v1.0.0.zip
+```
+
+#### macOS
+
+Use your Forever AddOns folder. On macOS, `tar` can unpack a zip file, so `tar -xf` works.
+
+```
+cd "<AddOns>"
+curl -L -O https://github.com/Johan-p/wow-voiceover/releases/latest/download/AI_VoiceOverData_Vanilla-v1.0.0.zip
+tar -xf AI_VoiceOverData_Vanilla-v1.0.0.zip
+```
 
 The CurseForge app cannot install this sound pack on Forever, because the CurseForge page is for Classic only. Install it from GitHub instead.
 
 ### Updating
 
-**If you installed with git:** run this, then type `/reload` in the game. If the update added a new file, restart the game instead.
+**If you installed with git:** run the line for your system, then type `/reload` in the game. If the update added a new file, restart the game instead.
+
+#### Windows, Command Prompt
 
 ```
 git -C "%USERPROFILE%\wow-voiceover" pull
+```
+
+#### Windows, PowerShell
+
+```
+git -C "$env:USERPROFILE\wow-voiceover" pull
+```
+
+#### Linux and macOS
+
+```
+git -C ~/wow-voiceover pull
 ```
 
 **If you installed by hand:** download the player zip again from the Releases page and replace the `AI_VoiceOver` folder with the new one.
