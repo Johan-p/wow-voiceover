@@ -22,8 +22,10 @@ This is a fork of the original work by [MrThinger](https://github.com/mrthinger/
 You need your Forever AddOns folder. It is here:
 
 ```
-C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns
+C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns
 ```
+
+If you played the Forever beta, your addons may still be in the old `_classic_beta_` folder next to it. The released game reads `_forever_`, so install there.
 
 Windows may ask for administrator permission when you copy files into Program Files. Click Continue or Yes.
 
@@ -42,10 +44,10 @@ First, open Command Prompt or PowerShell as administrator. Either one works with
 Then go to your AddOns folder with this line:
 
 ```
-pushd "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
+pushd "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns"
 ```
 
-This line works in both windows. Your prompt must now end in `\Interface\AddOns`; if it does not, or an error appeared, stop, because the game is installed somewhere else, and put your own `...\_classic_beta_\Interface\AddOns` path between the quotes. Do not run the next lines until the prompt shows the AddOns folder.
+This line works in both windows. Your prompt must now end in `\Interface\AddOns`; if it does not, or an error appeared, stop, because the game is installed somewhere else, and put your own `...\_forever_\Interface\AddOns` path between the quotes. Do not run the next lines until the prompt shows the AddOns folder.
 
 Now run these five lines, one at a time, in this order:
 
@@ -73,7 +75,7 @@ Last, restart the game completely. A new addon needs a full restart, not just `/
 If you installed with git: open Command Prompt or PowerShell as administrator, go to the AddOns folder, and pull the update. The prompt must end in `\Interface\AddOns`; if it does not, or an error appeared, stop and fix the path first. Then download the small file again, because it can change.
 
 ```
-pushd "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns"
+pushd "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns"
 git -C wow-voiceover pull
 curl.exe -f -L -o AI_VoiceOverData_Vanilla\AI_VoiceOverData_Vanilla_Camelot.toc https://raw.githubusercontent.com/Johan-p/wow-voiceover/master/AI_VoiceOverData_Vanilla/AI_VoiceOverData_Vanilla_Camelot.toc
 ```
